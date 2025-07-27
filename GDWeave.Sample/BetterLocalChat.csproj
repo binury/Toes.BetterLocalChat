@@ -1,14 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>MyModName</RootNamespace>
+    <RootNamespace>BetterLocalChat</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblySearchPaths>$(AssemblySearchPaths);$(GDWeavePath)/core;C:/Program Files (x86)/Steam/steamapps/common/WEBFISHING/GDWeave/core</AssemblySearchPaths>
-    <AssemblyName>MyModName</AssemblyName>
+    <AssemblyName>BetterLocalChat</AssemblyName>
     <Version>0.0.1</Version>
     <Authors>Toes</Authors>
     <Company>Toes</Company>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +18,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="..\README.md">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+        </None>
         <None Include="manifest.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 

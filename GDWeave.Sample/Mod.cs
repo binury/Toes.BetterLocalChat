@@ -1,78 +1,20 @@
 ﻿using GDWeave;
 using util.LexicalTransformer;
 
-namespace MyModName;
-
-/*
- The main entrypoint of your mod project
- This code here is invoked by GDWeave when loading your mod's DLL assembly, at runtime
-*/
+namespace BetterLocalChat;
 
 public class Mod : IMod
 {
+	private const string modName = "BetterLocalChat";
+
 	public Mod(IModInterface mi)
 	{
-		mi.RegisterScriptMod(
-			new TransformationRuleScriptModBuilder()
-				.ForMod(mi)
-				// ? Named solely for debugging/logging purposes
-				.Named("My Very First Mod")
-				// ! Note the file extension will end in gdc NOT gd
-				.Patching("res://Scenes/World/world.gdc")
-				.AddRule(
-					new TransformationRuleBuilder()
-						// ! These names MUST be unique or your mod will throw an System.InvalidOperationException when loading !
-						.Named("Amend default global chat message(s)")
-						.Do(Operation.Append)
-						.Matching(
-							TransformationPatternFactory.CreateGdSnippetPattern(
-								"""
-								Network._update_chat("Welcome to GLOBAL chat!")
-								"""
-							)
-						)
-						.With(
-							"""
-
-							Network._update_chat(["Your backpack is starting to smell sorta fishy...", "You're back! Try not to drown this time?", "Listen, can we just be reel for a moment?"][randi() % 3])
-
-							""",
-							2
-						)
-				)
-				.AddRule(
-					new TransformationRuleBuilder()
-						.Named("Birdpocalypse!")
-						.Do(Operation.ReplaceAll)
-						.Matching(
-							TransformationPatternFactory.CreateGdSnippetPattern(
-								"get_tree().get_nodes_in_group(\"bird\").size() > 8"
-							)
-						)
-						.With("get_tree().get_nodes_in_group(\"bird\").size() > 99")
-				)
-				.AddRule(
-					new TransformationRuleBuilder()
-						.Named("Birdpocalypse 2!!!")
-						.Do(Operation.Append)
-						// .Matching(TransformationPatternFactory.CreateGdSnippetPattern("size() > 8"))
-						.Matching(TransformationPatternFactory.CreateGdSnippetPattern("var count = randi() % 3 + 1"))
-						.With(
-							"""
-
-							count = 10
-
-							""",
-							1
-						)
-				)
-				.Build()
-		);
+		var config = new Config(mi.ReadConfig<ConfigFileSchema>());
 
 		mi.RegisterScriptMod(
 			new TransformationRuleScriptModBuilder()
 				.ForMod(mi)
-				.Named("local chat shortcut command")
+				.Named(modName + ": local chat shortcut command")
 				.Patching("res://Scenes/HUD/playerhud.gdc")
 				.AddRule(
 					new TransformationRuleBuilder()
@@ -131,7 +73,7 @@ public class Mod : IMod
 		mi.RegisterScriptMod(
 			new TransformationRuleScriptModBuilder()
 				.ForMod(mi)
-				.Named("Better Local Chat (Enhancements)")
+				.Named(modName + ": (Enhancements)")
 				.Patching("res://Scenes/Singletons/SteamNetwork.gdc")
 				.AddRule(
 					new TransformationRuleBuilder()
@@ -148,6 +90,7 @@ public class Mod : IMod
 					new util.LexicalTransformer.TransformationRuleBuilder()
 						.Named("Infinite local chat range limit")
 						.Do(Operation.Append)
+						.When(config.infiniteChatRange)
 						.Matching(
 							TransformationPatternFactory.CreateGdSnippetPattern(
 								"""
@@ -166,7 +109,7 @@ public class Mod : IMod
 				)
 				.AddRule(
 					new util.LexicalTransformer.TransformationRuleBuilder()
-						.Named("Print prefixed local chat under global tab too")
+						.Named("Print local chat (with prefix) under global tab too")
 						.Do(Operation.Append)
 						.Matching(
 							TransformationPatternFactory.CreateGdSnippetPattern(
@@ -178,7 +121,7 @@ public class Mod : IMod
 						.With(
 							"""
 
-							_recieve_safe_message(user_id, user_color, "(local) " + user_message, false)
+							 if dist < 25.0: _recieve_safe_message(user_id, user_color, "(local) " + user_message, false)
 
 							""",
 							6
@@ -186,7 +129,6 @@ public class Mod : IMod
 				)
 				.Build()
 		);
-		// }
 	}
 
 	public void Dispose()

@@ -1,10 +1,10 @@
 {
-  "Id": "Toes.MyModName",
-  "AssemblyPath": "MyModName.dll",
+  "Id": "Toes.BetterLocalChat",
+  "AssemblyPath": "BetterLocalChat.dll",
   "Metadata": {
-    "Name": "The Coolest Latest Mod Without a Name Yet",
+    "Name": "Better Local Chat",
     "Author": "Toes",
     "Version": "0.0.1",
-    "Description": "[This description is shown in some mod managers and might also be used in-game in Mod Settings menu]"
+    "Description": "ＥＮＨＡＮＣＥＤ | No more ugly message prefixes! | Local messages show in Global too! | /l command to chat from global without changing tabs!"
   }
 }
