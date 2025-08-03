@@ -27,3 +27,8 @@ Please feel free to reach out to us with feedback or to share your ideas
 
 ## Changelog
 
+### v0.0.3
+- Minor rework to handling of global messages
+	- If you had issues with global-local messages, this should resolve those
+- Bundled new LucyLib plugin for mod compatibility (Let me know if you see issues)
+

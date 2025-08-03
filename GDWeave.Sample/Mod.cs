@@ -88,33 +88,13 @@ public class Mod : IMod
 				)
 				.AddRule(
 					new util.LexicalTransformer.TransformationRuleBuilder()
-						.Named("Infinite local chat range limit")
-						.Do(Operation.Append)
-						.When(config.infiniteChatRange)
-						.Matching(
-							TransformationPatternFactory.CreateGdSnippetPattern(
-								"""
-								 if dist < 25.0: _recieve_safe_message(user_id, user_color, user_message, true)
-								"""
-							)
-						)
-						.With(
-							"""
-
-							if dist >= 25.0: _recieve_safe_message(user_id, user_color, user_message, true)
-
-							""",
-							6
-						)
-				)
-				.AddRule(
-					new util.LexicalTransformer.TransformationRuleBuilder()
 						.Named("Print local chat (with prefix) under global tab too")
 						.Do(Operation.Append)
+						.When(!config.infiniteChatRange)
 						.Matching(
 							TransformationPatternFactory.CreateGdSnippetPattern(
 								"""
-								 _recieve_safe_message(user_id, user_color, user_message, true)
+								if dist < 25.0: _recieve_safe_message(user_id, user_color, user_message, true)
 								"""
 							)
 						)
@@ -122,6 +102,49 @@ public class Mod : IMod
 							"""
 
 							 if dist < 25.0: _recieve_safe_message(user_id, user_color, "(local) " + user_message, false)
+
+							""",
+							6
+						)
+				)
+				.AddRule(
+					new util.LexicalTransformer.TransformationRuleBuilder()
+						.Named("Infinite local chat range limit")
+						.Do(Operation.Append)
+						.When(config.infiniteChatRange)
+						.Matching(
+							TransformationPatternFactory.CreateGdSnippetPattern(
+								"""
+								elif DATA["local"]:
+								"""
+							)
+						)
+						.With(
+							"""
+
+							_recieve_safe_message(user_id, user_color, "(local) " + user_message, false)
+
+							""",
+							6
+						)
+				)
+				.AddRule(
+					new util.LexicalTransformer.TransformationRuleBuilder()
+						.Named("Infinite local chat range limit 2")
+						.Do(Operation.Append)
+						.When(config.infiniteChatRange)
+						.Matching(
+							TransformationPatternFactory.CreateGdSnippetPattern(
+								"""
+								if dist < 25.0: _recieve_safe_message(user_id, user_color, user_message, true)
+								"""
+							)
+						)
+						// This approach is less intrusive/more compatible than changing the conditional!
+						.With(
+							"""
+
+							if dist >= 25.0: _recieve_safe_message(user_id, user_color, user_message, true)
 
 							""",
 							6
