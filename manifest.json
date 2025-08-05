@@ -1,6 +1,6 @@
 {
   "name": "BetterLocalChat",
-  "version_number": "0.0.3",
+  "version_number": "0.1.0",
   "website_url": "https://github.com/binury/Toes.BetterLocalChat",
   "description": "No more ugly message prefixes! | Local messages show in Global too! | /l command to chat from global without changing tabs!",
   "dependencies": []
