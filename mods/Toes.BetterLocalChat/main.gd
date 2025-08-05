@@ -20,7 +20,6 @@ func _ready():
 
 
 func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
-	print("BETTER LOCAL CHAT PROCESSING")
 	var has_bb := true
 	if not Network._validate_packet_information(DATA,
 		["message", "color", "local", "position", "zone", "zone_owner", "bb_user", "bb_msg"],

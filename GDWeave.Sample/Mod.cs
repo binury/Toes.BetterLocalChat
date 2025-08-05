@@ -152,6 +152,29 @@ public class Mod : IMod
 				)
 				.Build()
 		);
+
+		mi.RegisterScriptMod(
+			new TransformationRuleScriptModBuilder()
+				.ForMod(mi)
+				.Named(modName + ": (Enhancements 2)")
+				.Patching("res://Scenes/Entities/Player/player.gdc")
+				.AddRule(
+					new TransformationRuleBuilder()
+						.Named("Silently transmit server command messages (when prefixed by !)")
+						.Do(Operation.Append)
+						.Matching(TransformationPatternFactory.CreateFunctionDefinitionPattern("_message_sent", ["text"]))
+						.When(config.silentCommandMessages)
+						.With(
+							"""
+
+							if text.begins_with("!") and text.count("!") == 1: return
+
+							""",
+							1
+						)
+					)
+				.Build()
+		);
 	}
 
 	public void Dispose()
