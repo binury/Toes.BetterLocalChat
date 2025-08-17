@@ -1,11 +1,12 @@
 extends Node
 
-var infinite_chat_range := false
+var config: Dictionary = {}
 
 var should_warn_player_about_missing_mod := false
 
 onready var Chat = get_node("/root/ToesSocks/Chat")
 onready var Players = get_node("/root/ToesSocks/Players")
+onready var TackleBox = get_node_or_null("/root/TackleBox")
 
 
 func _init():
@@ -20,12 +21,11 @@ func _ready():
 		return
 	llib.NetManager.add_network_processor("message", funcref(self, "process_packet_message"), 99)
 
-	var Tacklebox = get_node_or_null("/root/TackleBox")
 	if not TackleBox:
 		should_warn_player_about_missing_mod = true
 		return
-	var config: Dictionary = TackleBox.get_mod_config("Toes.BetterLocalChat")
-	infinite_chat_range = config.get("infiniteChatRange", false)
+	config = TackleBox.get_mod_config("Toes.BetterLocalChat")
+
 
 
 func _on_ingame() -> void:
@@ -85,7 +85,7 @@ func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
 			DATA["zone"] == Network.MESSAGE_ZONE
 			and DATA["zone_owner"] == PlayerData.player_saved_zone_owner
 		):
-			if dist < 25.0 or infinite_chat_range:
+			if dist < 25.0 or config.get("infiniteChatRange", false):
 				receive_safe_message(
 					user_id, user_color, "(local) " + user_message, false, bb_msg, bb_user
 				)

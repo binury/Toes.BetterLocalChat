@@ -32,8 +32,10 @@ Please feel free to reach out to us with feedback or to share your ideas
 ## Changelog
 
 ### v0.2.0 - More LucysTools compatibility...
+- ***Now requires Socks as a dependency***
 - If you have configured BetterLocalChat settings (e.g., with Tacklebox) they will now be applied to the BLC LucysLib plugin, too
 	- I.e., Infinite `LOCAL` chat range should be working
+	- This ***requires you have Tacklebox installed*** as it uses their API to read your config
 
 ### v0.1.1
 - Fix small bug that prevented BBCode tags (rich text) from showing in `LOCAL` messages when using LucysTools
