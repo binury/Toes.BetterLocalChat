@@ -2,11 +2,11 @@ extends Node
 
 var infinite_chat_range := false
 
-var should_warn_player_about_missing_mod: = false
-
+var should_warn_player_about_missing_mod := false
 
 onready var Chat = get_node("/root/ToesSocks/Chat")
 onready var Players = get_node("/root/ToesSocks/Players")
+
 
 func _init():
 	pass
@@ -16,7 +16,8 @@ func _ready():
 	Players.connect("ingame", self, "_on_ingame")
 
 	var llib = get_node_or_null("/root/LucysLib")
-	if not llib: return
+	if not llib:
+		return
 	llib.NetManager.add_network_processor("message", funcref(self, "process_packet_message"), 99)
 
 	var Tacklebox = get_node_or_null("/root/TackleBox")
@@ -29,29 +30,47 @@ func _ready():
 
 func _on_ingame() -> void:
 	if should_warn_player_about_missing_mod:
-		Chat.write("Toes: Hey, %s, in order to properly use BetterLocalChat alongside LucysTools, you should install Tacklebox!" % Players.get_username(Players.local_player))
+		Chat.write(
+			(
+				"Toes: Hey, %s, in order to properly use BetterLocalChat alongside LucysTools, you should install Tacklebox!"
+				% Players.get_username(Players.local_player)
+			)
+		)
 		should_warn_player_about_missing_mod = false
-
 
 
 func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
 	var has_bb := true
-	if not Network._validate_packet_information(DATA,
+	if not Network._validate_packet_information(
+		DATA,
 		["message", "color", "local", "position", "zone", "zone_owner", "bb_user", "bb_msg"],
-		[TYPE_STRING, TYPE_STRING, TYPE_BOOL, TYPE_VECTOR3, TYPE_STRING, TYPE_INT, TYPE_STRING, TYPE_STRING]):
+		[
+			TYPE_STRING,
+			TYPE_STRING,
+			TYPE_BOOL,
+			TYPE_VECTOR3,
+			TYPE_STRING,
+			TYPE_INT,
+			TYPE_STRING,
+			TYPE_STRING
+		]
+	):
 		has_bb = false
-		if not Network._validate_packet_information(DATA,
+		if not Network._validate_packet_information(
+			DATA,
 			["message", "color", "local", "position", "zone", "zone_owner"],
-			[TYPE_STRING, TYPE_STRING, TYPE_BOOL, TYPE_VECTOR3, TYPE_STRING, TYPE_INT]):
+			[TYPE_STRING, TYPE_STRING, TYPE_BOOL, TYPE_VECTOR3, TYPE_STRING, TYPE_INT]
+		):
 			return true
 
 	if PlayerData.players_muted.has(PACKET_SENDER) or PlayerData.players_hidden.has(PACKET_SENDER):
 		return false
 
-	if not Network._message_cap(PACKET_SENDER): return false
+	if not Network._message_cap(PACKET_SENDER):
+		return false
 
 	var user_id: int = PACKET_SENDER
-	var user_color: String = DATA["color"].left(12).replace('[','')
+	var user_color: String = DATA["color"].left(12).replace("[", "")
 	var user_message: String = DATA["message"]
 
 	var bb_user: String = ""
@@ -62,15 +81,30 @@ func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
 
 	if DATA["local"]:
 		var dist = DATA["position"].distance_to(Network.MESSAGE_ORIGIN)
-		if DATA["zone"] == Network.MESSAGE_ZONE and DATA["zone_owner"] == PlayerData.player_saved_zone_owner:
+		if (
+			DATA["zone"] == Network.MESSAGE_ZONE
+			and DATA["zone_owner"] == PlayerData.player_saved_zone_owner
+		):
 			if dist < 25.0 or infinite_chat_range:
-				receive_safe_message(user_id, user_color, "(local) " + user_message, false, bb_msg, bb_user)
+				receive_safe_message(
+					user_id, user_color, "(local) " + user_message, false, bb_msg, bb_user
+				)
 	return false
 
-func receive_safe_message(user_id: int, color: String, message: String, local: bool = false,
-		bb_msg: String = "", bb_user: String = ""):
+
+func receive_safe_message(
+	user_id: int,
+	color: String,
+	message: String,
+	local: bool = false,
+	bb_msg: String = "",
+	bb_user: String = ""
+):
 	var llib = get_node_or_null("/root/LucysLib")
-	var srv_msg: bool = user_id == Network.STEAM_ID or user_id == Steam.getLobbyOwner(Network.STEAM_LOBBY_ID)
+	var srv_msg: bool = (
+		user_id == Network.STEAM_ID
+		or user_id == Steam.getLobbyOwner(Network.STEAM_LOBBY_ID)
+	)
 
 	if OptionsMenu.chat_filter:
 		message = SwearFilter._filter_string(message)
@@ -82,10 +116,18 @@ func receive_safe_message(user_id: int, color: String, message: String, local: b
 
 	Network._update_chat(final_message, local)
 
-func _rsm_construct(user_id: int, color: String, message: String, local: bool,
-		bb_msg: String, bb_user: String, srv_msg: bool):
+
+func _rsm_construct(
+	user_id: int,
+	color: String,
+	message: String,
+	local: bool,
+	bb_msg: String,
+	bb_user: String,
+	srv_msg: bool
+):
 	var llib = get_node_or_null("/root/LucysLib")
-	var net_name: String = Network._get_username_from_id(user_id).replace('[','').replace(']','')
+	var net_name: String = Network._get_username_from_id(user_id).replace("[", "").replace("]", "")
 	var name = llib.BBCode.parse_bbcode_text(net_name)
 	if bb_user != "":
 		if not srv_msg:
@@ -102,11 +144,12 @@ func _rsm_construct(user_id: int, color: String, message: String, local: bool,
 	var parsed_msg = llib.BBCode.parse_bbcode_text(to_parse)
 
 	var real_color: Color = color
-	if not srv_msg: real_color.a = max(real_color.a, 0.7)
-	var color_node  = llib.BBCode.tag_creator(llib.BBCode.TAG_TYPE.color,"")
+	if not srv_msg:
+		real_color.a = max(real_color.a, 0.7)
+	var color_node = llib.BBCode.tag_creator(llib.BBCode.TAG_TYPE.color, "")
 	color_node.color = real_color
 	color_node.inner = [name]
 
-	llib.BBCode.replace_in_strings(parsed_msg,"%u",color_node)
+	llib.BBCode.replace_in_strings(parsed_msg, "%u", color_node)
 
 	return parsed_msg
