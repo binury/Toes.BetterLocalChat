@@ -1,22 +1,37 @@
 extends Node
 
+var infinite_chat_range := false
+
+var should_warn_player_about_missing_mod: = false
+
+
+onready var Chat = get_node("/root/ToesSocks/Chat")
+onready var Players = get_node("/root/ToesSocks/Players")
 
 func _init():
 	pass
-	var llib = get_node_or_null("/root/LucysLib")
-	if not llib:
-		print('*'.repeat(100))
-		print("NO LUCY LIB ????")
-		print('*'.repeat(100))
-		return
-	llib.NetManager.add_network_processor("message", funcref(self, "process_packet_message"), 99)
 
 
 func _ready():
-	var llib = get_node_or_null("/root/LucysLib")
+	Players.connect("ingame", self, "_on_ingame")
 
+	var llib = get_node_or_null("/root/LucysLib")
 	if not llib: return
 	llib.NetManager.add_network_processor("message", funcref(self, "process_packet_message"), 99)
+
+	var Tacklebox = get_node_or_null("/root/TackleBox")
+	if not TackleBox:
+		should_warn_player_about_missing_mod = true
+		return
+	var config: Dictionary = TackleBox.get_mod_config("Toes.BetterLocalChat")
+	infinite_chat_range = config.get("infiniteChatRange", false)
+
+
+func _on_ingame() -> void:
+	if should_warn_player_about_missing_mod:
+		Chat.write("Toes: Hey, %s, in order to properly use BetterLocalChat alongside LucysTools, you should install Tacklebox!" % Players.get_username(Players.local_player))
+		should_warn_player_about_missing_mod = false
+
 
 
 func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
@@ -48,7 +63,7 @@ func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
 	if DATA["local"]:
 		var dist = DATA["position"].distance_to(Network.MESSAGE_ORIGIN)
 		if DATA["zone"] == Network.MESSAGE_ZONE and DATA["zone_owner"] == PlayerData.player_saved_zone_owner:
-			if dist < 25.0:
+			if dist < 25.0 or infinite_chat_range:
 				receive_safe_message(user_id, user_color, "(local) " + user_message, false, bb_msg, bb_user)
 	return false
 
@@ -75,7 +90,7 @@ func _rsm_construct(user_id: int, color: String, message: String, local: bool,
 	if bb_user != "":
 		if not srv_msg:
 			var user_parse = llib.BBCode.parse_bbcode_text(bb_user)
-			llib.clamp_alpha(user_parse, 0.7)
+			llib.BBCode.clamp_alpha(user_parse, 0.7)
 			if user_parse.get_stripped() == net_name:
 				name = user_parse
 		else:

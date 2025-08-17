@@ -31,6 +31,13 @@ Please feel free to reach out to us with feedback or to share your ideas
 
 ## Changelog
 
+### v0.2.0 - More LucysTools compatibility...
+- If you have configured BetterLocalChat settings (e.g., with Tacklebox) they will now be applied to the BLC LucysLib plugin, too
+	- I.e., Infinite `LOCAL` chat range should be working
+
+### v0.1.1
+- Fix small bug that prevented BBCode tags (rich text) from showing in `LOCAL` messages when using LucysTools
+
 ### v0.1.0
 - New feature! Ignored server commands
 	- Using server commands like `!kick player` will now be sent silently without emitting speech or a chat bubble.
