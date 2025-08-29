@@ -27,7 +27,6 @@ func _ready():
 	config = TackleBox.get_mod_config("Toes.BetterLocalChat")
 
 
-
 func _on_ingame() -> void:
 	if should_warn_player_about_missing_mod:
 		Chat.write(
@@ -37,6 +36,17 @@ func _on_ingame() -> void:
 			)
 		)
 		should_warn_player_about_missing_mod = false
+
+	var NEW_EDIT_BOX_CHAR_LIMIT = 480
+	# This seems to be about the limit of vanilla chat box length
+	# FWIW 20k is around ~ the actual network packet limit
+	# This can be higher but it requires modding on the receipient end
+	var text_edit_box = get_tree().get_root().find_node("LineEdit", true, false)
+	if text_edit_box:
+		# Should def not be null but :shrug: y'never know w WF and mods
+		text_edit_box.max_length = NEW_EDIT_BOX_CHAR_LIMIT
+	else:
+		push_error("[BetterLocalChat] Couldn't find LineEdit node. Unable to increase message limit and giving up.")
 
 
 func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
