@@ -1,9 +1,9 @@
 {
   "name": "BetterLocalChat",
   "author": "Toes",
-  "version_number": "0.2.0",
+  "version_number": "1.0.0",
   "website_url": "https://github.com/binury/Toes.BetterLocalChat",
-  "description": "No more ugly message prefixes! | Local messages show in Global too! | /l command to chat from global without changing tabs!",
+  "description": "Message size limit -> 300% | No more ugly [LOCAL] message prefixes! | [LOCAL] messages show in [GLOBAL] too! | /l command to chat from [GLOBAL] without changing tabs!",
   "dependencies": [
     "toes-Socks-0.4.0"
   ]

@@ -54,16 +54,7 @@ func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
 	if not Network._validate_packet_information(
 		DATA,
 		["message", "color", "local", "position", "zone", "zone_owner", "bb_user", "bb_msg"],
-		[
-			TYPE_STRING,
-			TYPE_STRING,
-			TYPE_BOOL,
-			TYPE_VECTOR3,
-			TYPE_STRING,
-			TYPE_INT,
-			TYPE_STRING,
-			TYPE_STRING
-		]
+		[TYPE_STRING, TYPE_STRING, TYPE_BOOL, TYPE_VECTOR3, TYPE_STRING, TYPE_INT, TYPE_STRING, TYPE_STRING]
 	):
 		has_bb = false
 		if not Network._validate_packet_information(
@@ -91,30 +82,17 @@ func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
 
 	if DATA["local"]:
 		var dist = DATA["position"].distance_to(Network.MESSAGE_ORIGIN)
-		if (
-			DATA["zone"] == Network.MESSAGE_ZONE
-			and DATA["zone_owner"] == PlayerData.player_saved_zone_owner
-		):
+		if DATA["zone"] == Network.MESSAGE_ZONE and DATA["zone_owner"] == PlayerData.player_saved_zone_owner:
 			if dist < 25.0 or config.get("infiniteChatRange", false):
-				receive_safe_message(
-					user_id, user_color, "(local) " + user_message, false, bb_msg, bb_user
-				)
+				receive_safe_message(user_id, user_color, "(local) " + user_message, false, bb_msg, bb_user)
 	return false
 
 
 func receive_safe_message(
-	user_id: int,
-	color: String,
-	message: String,
-	local: bool = false,
-	bb_msg: String = "",
-	bb_user: String = ""
+	user_id: int, color: String, message: String, local: bool = false, bb_msg: String = "", bb_user: String = ""
 ):
 	var llib = get_node_or_null("/root/LucysLib")
-	var srv_msg: bool = (
-		user_id == Network.STEAM_ID
-		or user_id == Steam.getLobbyOwner(Network.STEAM_LOBBY_ID)
-	)
+	var srv_msg: bool = user_id == Network.STEAM_ID or user_id == Steam.getLobbyOwner(Network.STEAM_LOBBY_ID)
 
 	if OptionsMenu.chat_filter:
 		message = SwearFilter._filter_string(message)
@@ -128,13 +106,7 @@ func receive_safe_message(
 
 
 func _rsm_construct(
-	user_id: int,
-	color: String,
-	message: String,
-	local: bool,
-	bb_msg: String,
-	bb_user: String,
-	srv_msg: bool
+	user_id: int, color: String, message: String, local: bool, bb_msg: String, bb_user: String, srv_msg: bool
 ):
 	var llib = get_node_or_null("/root/LucysLib")
 	var net_name: String = Network._get_username_from_id(user_id).replace("[", "").replace("]", "")

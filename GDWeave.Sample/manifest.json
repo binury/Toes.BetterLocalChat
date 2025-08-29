@@ -6,8 +6,8 @@
   "Metadata": {
     "Name": "Better Local Chat",
     "Author": "Toes",
-    "Version": "0.2.0",
-    "Description": "No more ugly message prefixes! | Local messages show in Global too! | /l command to chat from global without changing tabs!",
-    "Homepage": "https://ko-fi.com/toooes"
+    "Version": "1.0.0",
+    "Description": "No more *ugly* message prefixes! [LOCAL] messages show in [GLOBAL] too! /l command to chat from [GLOBAL] without changing tabs! And more!",
+    "Homepage": "https://github.com/binury/Toes.BetterLocalChat"
   }
 }
