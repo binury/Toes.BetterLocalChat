@@ -5,3 +5,5 @@
 
 bin/
 obj/
+*.pck
+*.zip

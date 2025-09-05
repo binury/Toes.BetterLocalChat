@@ -1,10 +1,14 @@
 # Better Local Chat
 
+## Features
 - Wax poetically about your deep thoughts with ~300% longer messages (164 ⇒ 480 char limit)
 - No more ugly message prefixes!
 - `LOCAL` messages show in Global too!
+- Notifications/sounds when your name is mentioned in chat
 - `/l` command to chat from `GLOBAL` without changing tabs!
 - Use server commands (e.g., `!kick`, `!spawn meatball`) without emitting speech or creating a chat bubble
+
+---
 
 While chatting in `GLOBAL` you can now prefix any message with a new `/l` command in order to send it as a `LOCAL` message.
 (Although I don't imagine it will happen often you _can_ also combine `/l /me emotes` and chain these commands to emote in `LOCAL`. `/l` works the very same way that your `/me` emotes do.)
@@ -17,20 +21,61 @@ The glitchy-looking text cramping up everyone's messages in the `LOCAL` tab is p
 Using server commands like `!kick player` will now be sent silently without emitting speech or a chat bubble.
 This is enabled by default \_but can be disabled in the mod configuration\_\_.
 
-## Feedback
+## ⚙️ Options
 
-Please feel free to reach out to us with feedback or to share your ideas
-[here](https://github.com/binury/Toes.BetterLocalChat/issues)!
+Options can be changed in-game via `Settings > Mods > Better Local Chat`,  
+or by editing `GDWeave/configs/Toes.BetterLocalChat.json`.
+
+```jsonc
+{
+  // Using server commands like `!kick player` will be sent silently without emitting speech or a chat bubble.
+  "silentCommandMessages": true,
+
+  // 1: Alt sound
+  // 2: Aol Instant Messenger Sound
+  "messageSound": 2,
+
+  // Flash window (if in background) when your name is mentioned in chat
+  "notifyOnMention": true,
+
+  // Play messageSound when your name is mentioned in chat
+  "soundOnMention": true,
+
+  // Flash window (if in background) whenever a player sends a message
+  "notifyOnMessage": false,
+
+  // Play messageSound whenever a player sends a message
+  "soundOnMessage": false,
+
+  // Whether Local chat should be confined to default 24 units range
+  "infiniteChatRange": false
+}
+```
 
 ## Support the mod maker
 
 <a href='https://ko-fi.com/A0A3YDMVY' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi4.png?v=6' border='0' alt='Buy Toes a Coffee at ko-fi.com' /></a>
 
-## Roadmap
 
-(Coming soon)
+## [Changelog](https://thunderstore.io/c/webfishing/p/toes/BetterLocalChat/changelog)
+
+## [Contributing (PRs welcomed)](https://github.com/binury/Toes.BetterLocalChat/pulls)
+
+## [Known Issues](https://github.com/binury/Toes.BetterLocalChat/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen)
+
+## [Feedback & Bug Reports (Discord)](https://discord.gg/kjf3FCAMDb)
+
+## [Roadmap & Feature Requests](https://github.com/binury/Toes.BetterLocalChat/issues?q=sort%3Aupdated-desc%20is%3Aissue%20is%3Aopen%20label%3Aenhancement)
+
 
 ## Changelog
+
+### v1.1.0 - Notifications
+
+#### Now requires [TackleBox](https://thunderstore.io/c/webfishing/p/PuppyGirl/TackleBox/) mod as dependency
+
+- **New feature**: Window notifications on messages/mentions
+- **New feature**: Sounds on messages/mentions
 
 ### v1.0.0 - The Twitter Update
 

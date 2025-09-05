@@ -1,10 +1,11 @@
 {
   "name": "BetterLocalChat",
   "author": "Toes",
-  "version_number": "1.0.0",
+  "version_number": "1.1.0",
   "website_url": "https://github.com/binury/Toes.BetterLocalChat",
-  "description": "Message size limit -> 300% | No more ugly [LOCAL] message prefixes! | [LOCAL] messages show in [GLOBAL] too! | /l command to chat from [GLOBAL] without changing tabs!",
+  "description": "The Webfishing chat QOL Mod",
   "dependencies": [
-    "toes-Socks-0.4.0"
+    "PuppyGirl-TackleBox-0.5.2",
+    "toes-Socks-0.1000.0"
   ]
 }

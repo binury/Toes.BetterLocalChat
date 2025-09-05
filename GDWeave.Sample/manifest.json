@@ -2,12 +2,12 @@
   "Id": "Toes.BetterLocalChat",
   "AssemblyPath": "BetterLocalChat.dll",
   "PackPath": "BetterLocalChat.pck",
-  "Dependencies": ["Toes.Socks"],
+  "Dependencies": ["TackleBox", "Toes.Socks"],
   "Metadata": {
     "Name": "Better Local Chat",
     "Author": "Toes",
-    "Version": "1.0.0",
-    "Description": "No more *ugly* message prefixes! [LOCAL] messages show in [GLOBAL] too! /l command to chat from [GLOBAL] without changing tabs! And more!",
+    "Version": "1.1.0",
+    "Description": "The Webfishing chat QOL Mod",
     "Homepage": "https://github.com/binury/Toes.BetterLocalChat"
   }
 }

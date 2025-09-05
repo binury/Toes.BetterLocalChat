@@ -17,8 +17,6 @@ var default_config: Dictionary = {
 
 var config := {}
 
-var should_warn_player_about_missing_mod := false
-
 var message_sound_1 := preload("res://mods/Toes.BetterLocalChat/scenes/message_sound_1.tscn")
 var message_sound_2 := preload("res://mods/Toes.BetterLocalChat/scenes/message_sound_2.tscn")
 var message_sounds := {
@@ -30,7 +28,7 @@ var message_sound
 
 onready var Chat = get_node("/root/ToesSocks/Chat")
 onready var Players = get_node("/root/ToesSocks/Players")
-onready var TackleBox = get_node_or_null("/root/TackleBox")
+onready var TackleBox = get_node("/root/TackleBox")
 
 
 func _config_updated(id: String, __):
@@ -42,9 +40,7 @@ func _config_updated(id: String, __):
 
 
 func _init_config() -> void:
-	var saved_config
-	if TackleBox != null:
-		saved_config = TackleBox.get_mod_config(MOD_ID)
+	var saved_config = TackleBox.get_mod_config(MOD_ID)
 	if not saved_config:
 		print("[BetterLocalChat] EMPTY CONFIGURATION - USING DEFAULT AS FALLBACK")
 		saved_config = default_config.duplicate()
@@ -63,18 +59,15 @@ func _ready():
 	Players.connect("ingame", self, "_on_ingame")
 	Chat.connect("player_messaged", self, "_on_message")
 	Chat.connect("player_emoted", self, "_on_emote")
-
-	var llib = get_node_or_null("/root/LucysLib")
-	if not llib:
-		return
-	llib.NetManager.add_network_processor("message", funcref(self, "process_packet_message"), 99)
-
-	if TackleBox:
-		TackleBox.connect("mod_config_updated", self, "_config_updated")
-	else:
-		should_warn_player_about_missing_mod = true
+	
 	_init_config()
 	set_msg_sound(config.messageSound)
+	TackleBox.connect("mod_config_updated", self, "_config_updated")
+	
+	var llib = get_node_or_null("/root/LucysLib")
+	if llib != null:
+		llib.NetManager.add_network_processor("message", funcref(self, "process_packet_message"), 99)
+
 
 
 func set_msg_sound(choice):
@@ -84,15 +77,6 @@ func set_msg_sound(choice):
 	add_child(message_sound)
 
 func _on_ingame() -> void:
-	if should_warn_player_about_missing_mod:
-		Chat.write(
-			(
-				"Toes: Hey, %s, in order to properly use BetterLocalChat alongside LucysTools, you should install Tacklebox!"
-				% Players.get_username(Players.local_player)
-			)
-		)
-		should_warn_player_about_missing_mod = false
-
 	var NEW_EDIT_BOX_CHAR_LIMIT = 480
 	# This seems to be about the limit of vanilla chat box length
 	# FWIW 20k is around ~ the actual network packet limit
