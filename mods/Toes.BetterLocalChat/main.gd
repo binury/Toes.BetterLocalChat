@@ -1,31 +1,87 @@
+########################
+## copyright 2025 binury
+########################
 extends Node
 
-var config: Dictionary = {}
+const MOD_ID := "Toes.BetterLocalChat"
+
+var default_config: Dictionary = {
+	"infiniteChatRange": false,
+	"silentCommandMessages": true,
+	"messageSound": 2,
+	"notifyOnMention": true,
+	"soundOnMention": true,
+	"notifyOnMessage": false,
+	"soundOnMessage": false,
+}
+
+var config := {}
 
 var should_warn_player_about_missing_mod := false
+
+var message_sound_1 := preload("res://mods/Toes.BetterLocalChat/scenes/message_sound_1.tscn")
+var message_sound_2 := preload("res://mods/Toes.BetterLocalChat/scenes/message_sound_2.tscn")
+var message_sounds := {
+	1: message_sound_1.instance(),
+	2: message_sound_2.instance(),
+}
+var message_sound
+
 
 onready var Chat = get_node("/root/ToesSocks/Chat")
 onready var Players = get_node("/root/ToesSocks/Players")
 onready var TackleBox = get_node_or_null("/root/TackleBox")
 
 
-func _init():
-	pass
+func _config_updated(id: String, __):
+	if id != MOD_ID:
+		return
+	Chat.write("[color=purple]BetterLocalChat Settings Reloaded ✅[/color]")
+	_init_config()
+	set_msg_sound(config.messageSound)
+
+
+func _init_config() -> void:
+	var saved_config
+	if TackleBox != null:
+		saved_config = TackleBox.get_mod_config(MOD_ID)
+	if not saved_config:
+		print("[BetterLocalChat] EMPTY CONFIGURATION - USING DEFAULT AS FALLBACK")
+		saved_config = default_config.duplicate()
+	for key in default_config.keys():
+		if not saved_config.has(key):
+			saved_config[key] = default_config[key]
+	config = saved_config
+	_save_config()
+
+
+func _save_config() -> void:
+	TackleBox.set_mod_config(MOD_ID, config)
 
 
 func _ready():
 	Players.connect("ingame", self, "_on_ingame")
+	Chat.connect("player_messaged", self, "_on_message")
+	Chat.connect("player_emoted", self, "_on_emote")
 
 	var llib = get_node_or_null("/root/LucysLib")
 	if not llib:
 		return
 	llib.NetManager.add_network_processor("message", funcref(self, "process_packet_message"), 99)
 
-	if not TackleBox:
+	if TackleBox:
+		TackleBox.connect("mod_config_updated", self, "_config_updated")
+	else:
 		should_warn_player_about_missing_mod = true
-		return
-	config = TackleBox.get_mod_config("Toes.BetterLocalChat")
+	_init_config()
+	set_msg_sound(config.messageSound)
 
+
+func set_msg_sound(choice):
+	if message_sound != null and message_sound.get_parent():
+		message_sound.get_parent().remove_child(message_sound)
+	message_sound = message_sounds[int(choice)]
+	add_child(message_sound)
 
 func _on_ingame() -> void:
 	if should_warn_player_about_missing_mod:
@@ -47,6 +103,40 @@ func _on_ingame() -> void:
 		text_edit_box.max_length = NEW_EDIT_BOX_CHAR_LIMIT
 	else:
 		push_error("[BetterLocalChat] Couldn't find LineEdit node. Unable to increase message limit and giving up.")
+
+
+func _notify_if_mentioned(message: String) -> bool:
+	var username: String = Players.get_username()
+	var matcher := RegEx.new()
+	matcher.compile("\\b%s\\b" % username.to_lower())
+	var result = matcher.search(message.to_lower())
+	if result != null:
+		_flash_window()
+		return true
+	return false
+
+
+func _on_message(message: String, player: String, from_self: bool):
+	if from_self:
+		return
+	if config.notifyOnMessage:
+		_flash_window()
+	if config.soundOnMessage:
+		message_sound.play()
+	elif config.notifyOnMention and _notify_if_mentioned(message):
+		if config.soundOnMention:
+			message_sound.play()
+
+
+func _flash_window():
+	if not OS.is_window_focused():
+		OS.request_attention()
+
+func _on_emote(message: String, player: String, from_self: bool):
+	if from_self:
+		return
+	if _notify_if_mentioned(message):
+		message_sound.play()
 
 
 func process_packet_message(DATA, PACKET_SENDER, from_host) -> bool:
