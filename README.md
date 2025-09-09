@@ -70,6 +70,12 @@ or by editing `GDWeave/configs/Toes.BetterLocalChat.json`.
 
 ## Changelog
 
+### v1.1.1
+
+- Hotfixed crash when launching alongside Lucystools
+  - Very strange error
+- Fix settings hot-reloading
+
 ### v1.1.0 - Notifications
 
 #### Now requires [TackleBox](https://thunderstore.io/c/webfishing/p/PuppyGirl/TackleBox/) mod as dependency
