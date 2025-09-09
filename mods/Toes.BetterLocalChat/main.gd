@@ -48,7 +48,6 @@ func _init_config() -> void:
 		if not saved_config.has(key):
 			saved_config[key] = default_config[key]
 	config = saved_config
-	_save_config()
 
 
 func _save_config() -> void:
