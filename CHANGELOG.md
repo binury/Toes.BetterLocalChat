@@ -1,6 +1,10 @@
 
 # Changelog
 
+## v2.0.0 - Yapback consolidation
+
+- Consolidated all features of Yapback into BetterLocalChat
+
 ## v1.1.0 - Notifications
 
 ### Now requires [TackleBox](https://thunderstore.io/c/webfishing/p/PuppyGirl/TackleBox/) mod as dependency

@@ -162,7 +162,9 @@ public class Mod : IMod
 					new TransformationRuleBuilder()
 						.Named("Silently transmit server command messages (when prefixed by !)")
 						.Do(Operation.Append)
-						.Matching(TransformationPatternFactory.CreateFunctionDefinitionPattern("_message_sent", ["text"]))
+						.Matching(
+							TransformationPatternFactory.CreateFunctionDefinitionPattern("_message_sent", ["text"])
+						)
 						.When(config.silentCommandMessages)
 						.With(
 							"""
@@ -172,13 +174,94 @@ public class Mod : IMod
 							""",
 							1
 						)
-					)
+				)
+				.Build()
+		);
+
+		mi.RegisterScriptMod(
+			new TransformationRuleScriptModBuilder()
+				.ForMod(mi)
+				.Named("YapBack - Network Patch")
+				.Patching("res://Scenes/Singletons/SteamNetwork.gdc")
+				.AddRule(
+					new TransformationRuleBuilder()
+						.Named("Line number override")
+						.Matching(TransformationPatternFactory.CreateGdSnippetPattern("var max_chat_length = 128"))
+						.With("+ 3968", 1)
+				)
+				.Build()
+		);
+
+		mi.RegisterScriptMod(
+			new TransformationRuleScriptModBuilder()
+				.ForMod(mi)
+				.Named("YapBackk - PlayerHud Patches")
+				.Patching("res://Scenes/HUD/playerhud.gdc")
+				.AddRule(
+					new TransformationRuleBuilder()
+						.Named("Scroll bar restore")
+						.Matching(
+							TransformationPatternFactory.CreateGdSnippetPattern("gamechat.scroll_active = using_chat")
+						)
+						.With(
+							"""
+
+							gamechat.scroll_active = chat_timer > 0
+
+							""",
+							1
+						)
+				)
+				.AddRule(
+					new TransformationRuleBuilder()
+						.Named("Auto scroll pause")
+						.Matching(
+							TransformationPatternFactory.CreateGdSnippetPattern(
+								"chat.placeholder_text = \"Type to chat!\""
+							)
+						)
+						.With(
+							"""
+
+							gamechat.scroll_following = false
+
+							""",
+							4
+						)
+				)
+				.AddRule(
+					new TransformationRuleBuilder()
+						.Named("Auto scroll resume")
+						.Matching(TransformationPatternFactory.CreateGdSnippetPattern("chat.selecting_enabled = false"))
+						.With(
+							"""
+
+							gamechat.scroll_following = true
+							gamechat.scroll_to_line(gamechat.get_line_count() - 1)
+
+							""",
+							1
+						)
+				)
+				.AddRule(
+					new TransformationRuleBuilder()
+						.Named("Extend chat fade timeout")
+						.Matching(TransformationPatternFactory.CreateGdSnippetPattern("chat_timer = 30"))
+						.With(
+							"""
+
+							chat_timer = 60
+
+							""",
+							2
+						)
+				)
 				.Build()
 		);
 	}
 
 	public void Dispose()
 	{
-		// Post-injection cleanup (optional)
+		// Post-injection cleanup (optionalTransformationPatternFactory.CreateGdSnippetPattern)
 	}
 }
